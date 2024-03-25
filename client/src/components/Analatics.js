@@ -1,6 +1,7 @@
 import { Progress } from "antd";
 import React from "react";
 import "../resources/analatics.css";
+
 function Analatics({ transactions }) {
   const totalTransactions = transactions.length;
   const totalIncomeTransactions = transactions.filter(
@@ -14,17 +15,17 @@ function Analatics({ transactions }) {
   const totalExpenceTransactionsPercentage =
     (totalExpenceTransactions.length / totalTransactions) * 100;
 
-  const totalTurnover = transactions.reduce(
-    (acc, transaction) => acc - transaction.amount,
+  const totalIncomeTurnover = totalIncomeTransactions.reduce(
+    (acc, transaction) => acc + transaction.amount,
     0
   );
-  const totalIncomeTurnover = transactions
-    .filter((transaction) => transaction.type === "income")
-    .reduce((acc, transaction) => acc + transaction.amount, 0);
-  const totalExpenceTurnover = transactions
-    .filter((transaction) => transaction.type === "expence")
-    .reduce((acc, transaction) => acc + transaction.amount, 0);
-  console.log(totalExpenceTurnover);
+  const totalExpenceTurnover = totalExpenceTransactions.reduce(
+    (acc, transaction) => acc + transaction.amount,
+    0
+  );
+
+  const totalTurnover = totalIncomeTurnover - totalExpenceTurnover;
+
   const totalIncomeTurnoverPercentage =
     (totalIncomeTurnover / totalTurnover) * 100;
   const totalExpenceTurnoverPercentage =
@@ -91,20 +92,27 @@ function Analatics({ transactions }) {
           </div>
         </div>
       </div>
-       <hr />
+      <hr />
       <div className="row">
         <div className="col-md-6">
           <div className="category-analysis">
             <h4>Income - Category Wise</h4>
             {categories.map((category) => {
-              const amount = transactions
-                .filter((t) => t.type == "income" && t.category === category)
+              const amount = totalIncomeTransactions
+                .filter((t) => t.category === category)
                 .reduce((acc, t) => acc + t.amount, 0);
               return (
-                amount > 0 && <div className="category-card">
-                  <h5>{category}</h5>
-                  <Progress strokeColor='#0B5AD9' percent={((amount / totalIncomeTurnover) * 100).toFixed(0)} />
-                </div>
+                amount > 0 && (
+                  <div className="category-card">
+                    <h5>{category}</h5>
+                    <Progress
+                      strokeColor="#0B5AD9"
+                      percent={((amount / totalIncomeTurnover) * 100).toFixed(
+                        0
+                      )}
+                    />
+                  </div>
+                )
               );
             })}
           </div>
@@ -114,14 +122,21 @@ function Analatics({ transactions }) {
           <div className="category-analysis">
             <h4>Expence - Category Wise</h4>
             {categories.map((category) => {
-              const amount = transactions
-                .filter((t) => t.type == "expence" && t.category === category)
+              const amount = totalExpenceTransactions
+                .filter((t) => t.category === category)
                 .reduce((acc, t) => acc + t.amount, 0);
               return (
-               amount > 0 && <div className="category-card">
-                  <h5>{category}</h5>
-                  <Progress strokeColor='#0B5AD9' percent={((amount / totalExpenceTurnover) * 100).toFixed(0)} />
-                </div>
+                amount > 0 && (
+                  <div className="category-card">
+                    <h5>{category}</h5>
+                    <Progress
+                      strokeColor="#0B5AD9"
+                      percent={((amount / totalExpenceTurnover) * 100).toFixed(
+                        0
+                      )}
+                    />
+                  </div>
+                )
               );
             })}
           </div>
