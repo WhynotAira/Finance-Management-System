@@ -15,7 +15,7 @@ function Analatics({ transactions }) {
     (totalExpenceTransactions.length / totalTransactions) * 100;
 
   const totalTurnover = transactions.reduce(
-    (acc, transaction) => acc + transaction.amount,
+    (acc, transaction) => acc - transaction.amount,
     0
   );
   const totalIncomeTurnover = transactions
